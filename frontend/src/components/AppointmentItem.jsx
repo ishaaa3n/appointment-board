@@ -1,12 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-function formatTime(t) {
-  const [h, m] = t.split(":");
-  const hour = Number(h);
-  const suffix = hour >= 12 ? "PM" : "AM";
-  const hour12 = hour % 12 === 0 ? 12 : hour % 12;
-  return `${hour12}:${m} ${suffix}`;
-}
+import { formatTimeLabel } from "../dateUtils.js";
 
 function isOverdue(appointment) {
   if (appointment.status !== "scheduled") return false;
@@ -14,8 +8,16 @@ function isOverdue(appointment) {
   return end.getTime() < Date.now();
 }
 
+const STATUS_LABEL = {
+  scheduled: "Scheduled",
+  completed: "Completed",
+  missed: "Missed",
+  cancelled: "Cancelled",
+};
+
 export default function AppointmentItem({
   appointment,
+  isLast,
   onEdit,
   onComplete,
   onMiss,
@@ -46,6 +48,8 @@ export default function AppointmentItem({
   let menuItems = [];
   if (status === "scheduled") {
     menuItems = [
+      { label: "Edit", onClick: closeMenuThen(onEdit) },
+      { label: "Mark as completed", onClick: closeMenuThen(onComplete) },
       { label: "Mark as missed", onClick: closeMenuThen(onMiss) },
       {
         label: "Cancel appointment",
@@ -78,45 +82,24 @@ export default function AppointmentItem({
   }
 
   return (
-    <div className={`appointment-item status-${status}${overdue ? " is-overdue" : ""}`}>
-      <div className="appointment-time">
-        {formatTime(start_time)}
-        <span className="appointment-time-sep">&ndash;</span>
-        {formatTime(end_time)}
+    <div className={`agenda-row status-${status}${isLast ? " agenda-row-last" : ""}`}>
+      <div className="agenda-time">
+        <span>{formatTimeLabel(start_time)}</span>
+        <span className="agenda-time-end">{formatTimeLabel(end_time)}</span>
       </div>
 
-      <div className="appointment-body">
-        <div className="appointment-title-row">
-          <span className="appointment-title">{title}</span>
-          <span className={`badge badge-${status}`}>{status}</span>
-        </div>
-        {description && <div className="appointment-description">{description}</div>}
-        {overdue && (
-          <div className="appointment-overdue-hint">
-            This appointment's time has passed — mark it as completed or missed.
-          </div>
-        )}
+      <div className="agenda-rail">
+        <span className={`agenda-dot dot-${status}`} />
       </div>
 
-      <div className="appointment-actions">
-        {status === "scheduled" && (
-          <>
-            <button
-              className="btn btn-ghost btn-sm"
-              onClick={() => onEdit(appointment)}
-            >
-              Edit
-            </button>
-            <button
-              className="btn btn-success btn-sm"
-              onClick={() => onComplete(appointment)}
-            >
-              Complete
-            </button>
-          </>
-        )}
+      <div className="agenda-content">
+        <div className="agenda-title-row">
+          <span className="agenda-title">{title}</span>
+          <span className={`agenda-status status-${status}`}>
+            <span className="status-dot" />
+            {STATUS_LABEL[status]}
+          </span>
 
-        {menuItems.length > 0 && (
           <div className="menu-wrap" ref={menuRef}>
             <button
               className="btn btn-icon"
@@ -138,6 +121,14 @@ export default function AppointmentItem({
                 ))}
               </div>
             )}
+          </div>
+        </div>
+
+        {description && <div className="agenda-description">{description}</div>}
+
+        {overdue && (
+          <div className="agenda-overdue">
+            &#9888; Time has passed &middot; mark as completed or missed
           </div>
         )}
       </div>

@@ -1,21 +1,23 @@
 import { useEffect, useRef, useState } from "react";
 
+import { formatTimeLabel } from "../dateUtils.js";
+
 const OPTIONS = (() => {
   const options = [];
   for (let h = 0; h < 24; h++) {
     for (const m of [0, 15, 30, 45]) {
       const value = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-      const suffix = h >= 12 ? "PM" : "AM";
-      const hour12 = h % 12 === 0 ? 12 : h % 12;
-      const label = `${hour12}:${String(m).padStart(2, "0")} ${suffix}`;
-      options.push({ value, label });
+      options.push({ value, label: formatTimeLabel(value) });
     }
   }
   return options;
 })();
 
+const LIST_HEIGHT = 168; // max-height of .time-select-list plus a small margin
+
 export default function TimeSelect({ id, value, onChange }) {
   const [open, setOpen] = useState(false);
+  const [openUpward, setOpenUpward] = useState(false);
   const wrapRef = useRef(null);
   const selectedRef = useRef(null);
 
@@ -34,6 +36,19 @@ export default function TimeSelect({ id, value, onChange }) {
     }
   }, [open]);
 
+  const handleToggle = () => {
+    if (!open && wrapRef.current) {
+      const triggerRect = wrapRef.current.getBoundingClientRect();
+      const modal = wrapRef.current.closest(".modal");
+      const containerBottom = modal
+        ? modal.getBoundingClientRect().bottom
+        : window.innerHeight;
+      const spaceBelow = Math.min(containerBottom, window.innerHeight) - triggerRect.bottom;
+      setOpenUpward(spaceBelow < LIST_HEIGHT);
+    }
+    setOpen((o) => !o);
+  };
+
   const selectedLabel = OPTIONS.find((o) => o.value === value)?.label || "Select time";
 
   const choose = (v) => {
@@ -47,7 +62,7 @@ export default function TimeSelect({ id, value, onChange }) {
         type="button"
         id={id}
         className="time-select-trigger"
-        onClick={() => setOpen((o) => !o)}
+        onClick={handleToggle}
         aria-haspopup="listbox"
         aria-expanded={open}
       >
@@ -56,7 +71,10 @@ export default function TimeSelect({ id, value, onChange }) {
       </button>
 
       {open && (
-        <ul className="time-select-list" role="listbox">
+        <ul
+          className={`time-select-list${openUpward ? " time-select-list-up" : ""}`}
+          role="listbox"
+        >
           {OPTIONS.map((opt) => (
             <li
               key={opt.value}

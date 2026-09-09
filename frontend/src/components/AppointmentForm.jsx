@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { listAppointments } from "../api.js";
+import { formatTimeLabel } from "../dateUtils.js";
 import TimeSelect from "./TimeSelect.jsx";
 
 const emptyForm = {
@@ -32,13 +33,6 @@ function validate(form) {
     errors.end_time = "End time must be after start time.";
   }
   return errors;
-}
-
-function formatTime(t) {
-  const [h, m] = t.split(":").map(Number);
-  const suffix = h >= 12 ? "PM" : "AM";
-  const hour12 = h % 12 === 0 ? 12 : h % 12;
-  return `${hour12}:${String(m).padStart(2, "0")} ${suffix}`;
 }
 
 function findLocalConflict(existing, form, excludeId) {
@@ -208,9 +202,9 @@ export default function AppointmentForm({
               {availability.state === "conflict" && (
                 <div className="availability-row availability-conflict">
                   ⚠ This overlaps with "{availability.conflict.title}" (
-                  {formatTime(availability.conflict.start_time.slice(0, 5))}
+                  {formatTimeLabel(availability.conflict.start_time.slice(0, 5))}
                   {" – "}
-                  {formatTime(availability.conflict.end_time.slice(0, 5))})
+                  {formatTimeLabel(availability.conflict.end_time.slice(0, 5))})
                 </div>
               )}
             </div>

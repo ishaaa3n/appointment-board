@@ -1,5 +1,6 @@
 import { formatLong, todayISO } from "../dateUtils.js";
 import AppointmentItem from "./AppointmentItem.jsx";
+import TodayPill from "./TodayPill.jsx";
 
 function statusBreakdown(items) {
   const counts = { scheduled: 0, completed: 0, missed: 0, cancelled: 0 };
@@ -58,7 +59,7 @@ export default function AppointmentBoard({
         <div key={date} className="board-group">
           <h3 className="board-group-heading">
             {formatLong(date)}
-            {date === todayISO() && <span className="today-pill">Today</span>}
+            {date === todayISO() && <TodayPill chip />}
             <span className="board-group-count">
               {grouped[date].length} appointment
               {grouped[date].length === 1 ? "" : "s"}
@@ -66,11 +67,12 @@ export default function AppointmentBoard({
               {statusBreakdown(grouped[date])}
             </span>
           </h3>
-          <div className="board-group-list">
-            {grouped[date].map((appt) => (
+          <div className="agenda-list">
+            {grouped[date].map((appt, i) => (
               <AppointmentItem
                 key={appt.id}
                 appointment={appt}
+                isLast={i === grouped[date].length - 1}
                 onEdit={onEdit}
                 onComplete={onComplete}
                 onMiss={onMiss}

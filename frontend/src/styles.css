@@ -71,39 +71,70 @@ body {
 .date-strip-day {
   background: transparent;
   border: 1px solid transparent;
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-muted);
+  border-radius: 8px;
+  padding: 6px 12px;
   cursor: pointer;
   display: flex;
-  align-items: center;
-  gap: 6px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
 }
 
 .date-strip-day:hover {
   background: #f1f2f4;
 }
 
-.date-strip-day-active {
+.date-strip-date {
+  font-size: 13px;
+  font-weight: 700;
   color: var(--text);
-  background: #e8effe;
+}
+
+.date-strip-weekday {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.date-strip-day-active {
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  background: #f0faf3;
+  border-color: #bfe8cd;
   cursor: default;
 }
 
 .date-strip-day-active:hover {
-  background: #e8effe;
+  background: #f0faf3;
+}
+
+.date-strip-label {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .today-pill {
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  background: var(--primary);
-  color: #fff;
-  padding: 2px 7px;
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--success);
+}
+
+.today-pill-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+}
+
+.today-pill-chip {
+  background: #eafaf0;
+  padding: 3px 9px;
   border-radius: 999px;
 }
 
@@ -200,15 +231,6 @@ textarea:focus {
   background: #f1f2f4;
 }
 
-.btn-success {
-  background: #e8f7ee;
-  color: var(--success);
-}
-
-.btn-success:hover {
-  background: #d6f0e0;
-}
-
 .btn-danger-solid {
   background: var(--danger);
   color: #fff;
@@ -264,127 +286,166 @@ textarea:focus {
   font-weight: 400;
 }
 
-.board-group-list {
+.agenda-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
 }
 
-.appointment-item {
-  display: flex;
-  align-items: center;
+.agenda-row {
+  display: grid;
+  grid-template-columns: 68px 20px 1fr;
   gap: 14px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-left: 3px solid var(--scheduled);
-  border-radius: 8px;
-  padding: 10px 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
 }
 
-.appointment-item.status-completed {
-  border-left-color: var(--completed);
+.agenda-row-last {
+  border-bottom: none;
 }
 
-.appointment-item.status-missed {
-  border-left-color: var(--missed);
-}
-
-.appointment-item.status-cancelled {
-  border-left-color: var(--cancelled);
-  opacity: 0.7;
-}
-
-.appointment-item.is-overdue {
-  border-left-color: var(--missed);
-  background: #fffaf0;
-}
-
-.appointment-time {
-  min-width: 118px;
-  font-size: 13px;
+.agenda-time {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12.5px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--text);
   white-space: nowrap;
+  padding-top: 1px;
 }
 
-.appointment-time-sep {
-  color: var(--text-muted);
-  margin: 0 3px;
+.agenda-time-end {
   font-weight: 400;
+  color: var(--text-muted);
 }
 
-.appointment-body {
-  flex: 1;
+.agenda-rail {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.agenda-rail::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: -14px;
+  left: 50%;
+  width: 1px;
+  background: var(--border);
+  transform: translateX(-50%);
+}
+
+.agenda-row-last .agenda-rail::before {
+  bottom: auto;
+  height: 6px;
+}
+
+.agenda-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 4px;
+  position: relative;
+  z-index: 1;
+  background: var(--scheduled);
+}
+
+.dot-completed {
+  background: var(--completed);
+}
+
+.dot-missed {
+  background: var(--missed);
+}
+
+.dot-cancelled {
+  background: var(--cancelled);
+}
+
+.agenda-content {
   min-width: 0;
 }
 
-.appointment-title-row {
+.agenda-title-row {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.appointment-title {
+.agenda-title {
   font-weight: 600;
   font-size: 14px;
-}
-
-.status-cancelled .appointment-title {
-  text-decoration: line-through;
-  color: var(--text-muted);
-}
-
-.appointment-description {
-  font-size: 12.5px;
-  color: var(--text-muted);
-  margin-top: 1px;
+  flex-shrink: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.appointment-overdue-hint {
+.status-cancelled .agenda-title {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.agenda-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.agenda-status .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.agenda-status.status-scheduled {
+  color: var(--scheduled);
+}
+.agenda-status.status-scheduled .status-dot {
+  background: var(--scheduled);
+}
+
+.agenda-status.status-completed {
+  color: var(--completed);
+}
+.agenda-status.status-completed .status-dot {
+  background: var(--completed);
+}
+
+.agenda-status.status-missed {
+  color: var(--missed);
+}
+.agenda-status.status-missed .status-dot {
+  background: var(--missed);
+}
+
+.agenda-status.status-cancelled {
+  color: var(--cancelled);
+}
+.agenda-status.status-cancelled .status-dot {
+  background: var(--cancelled);
+}
+
+.agenda-description {
+  font-size: 12.5px;
+  color: var(--text-muted);
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.agenda-overdue {
   font-size: 12px;
   font-weight: 600;
   color: var(--missed);
   margin-top: 4px;
-}
-
-.badge {
-  font-size: 10.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  padding: 2px 7px;
-  border-radius: 999px;
-}
-
-.badge-scheduled {
-  background: #e8effe;
-  color: var(--scheduled);
-}
-
-.badge-completed {
-  background: #e8f7ee;
-  color: var(--completed);
-}
-
-.badge-missed {
-  background: #fdf1e2;
-  color: var(--missed);
-}
-
-.badge-cancelled {
-  background: #f1f2f4;
-  color: var(--cancelled);
-}
-
-.appointment-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
 }
 
 .menu-wrap {
@@ -545,6 +606,11 @@ textarea:focus {
   overflow-y: auto;
 }
 
+.time-select-list-up {
+  top: auto;
+  bottom: calc(100% + 4px);
+}
+
 .time-select-option {
   padding: 7px 10px;
   font-size: 13.5px;
@@ -658,12 +724,12 @@ textarea:focus {
     flex-direction: column;
   }
 
-  .appointment-item {
-    flex-wrap: wrap;
+  .agenda-row {
+    grid-template-columns: 68px 16px 1fr;
+    gap: 10px;
   }
 
-  .appointment-actions {
-    width: 100%;
-    justify-content: flex-end;
+  .agenda-title-row {
+    flex-wrap: wrap;
   }
 }

@@ -6,6 +6,16 @@ appointments, with server-side double-booking prevention.
 **Stack:** React (Vite) frontend + FastAPI backend + SQLAlchemy (SQLite by
 default, Postgres/MySQL-ready).
 
+## Screenshots
+
+**Board** — a day's appointments as an agenda/timeline, with status filters and day navigation:
+
+![Appointment board](screenshots/board.png)
+
+**Add Appointment** — live availability check against existing appointments as you fill in the time:
+
+![Add appointment modal](screenshots/add-appointment.png)
+
 ## Overview
 
 **How it works**

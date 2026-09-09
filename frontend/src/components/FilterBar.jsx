@@ -1,4 +1,5 @@
-import { formatShort, shiftDate, todayISO } from "../dateUtils.js";
+import { formatShort, formatWeekdayShort, shiftDate, todayISO } from "../dateUtils.js";
+import TodayPill from "./TodayPill.jsx";
 
 export default function FilterBar({ filters, onChange }) {
   const today = todayISO();
@@ -26,12 +27,16 @@ export default function FilterBar({ filters, onChange }) {
           className="date-strip-day"
           onClick={() => selectDate(prev)}
         >
-          {formatShort(prev)}
+          <span className="date-strip-date">{formatShort(prev)}</span>
+          <span className="date-strip-weekday">{formatWeekdayShort(prev)}</span>
         </button>
 
         <button type="button" className="date-strip-day date-strip-day-active">
-          {formatShort(current)}
-          {current === today && <span className="today-pill">Today</span>}
+          <span className="date-strip-label">
+            <span className="date-strip-date">{formatShort(current)}</span>
+            <span className="date-strip-weekday">{formatWeekdayShort(current)}</span>
+          </span>
+          {current === today && <TodayPill />}
         </button>
 
         <button
@@ -39,7 +44,8 @@ export default function FilterBar({ filters, onChange }) {
           className="date-strip-day"
           onClick={() => selectDate(next)}
         >
-          {formatShort(next)}
+          <span className="date-strip-date">{formatShort(next)}</span>
+          <span className="date-strip-weekday">{formatWeekdayShort(next)}</span>
         </button>
 
         <button

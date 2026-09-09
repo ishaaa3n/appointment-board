@@ -14,23 +14,7 @@ import AppointmentForm from "./components/AppointmentForm.jsx";
 import ConfirmDialog from "./components/ConfirmDialog.jsx";
 import FilterBar from "./components/FilterBar.jsx";
 import Toast from "./components/Toast.jsx";
-import { todayISO } from "./dateUtils.js";
-
-function formatTime(t) {
-  const [h, m] = t.split(":").map(Number);
-  const suffix = h >= 12 ? "PM" : "AM";
-  const hour12 = h % 12 === 0 ? 12 : h % 12;
-  return `${hour12}:${String(m).padStart(2, "0")} ${suffix}`;
-}
-
-function formatDate(dateStr) {
-  const [y, m, d] = dateStr.split("-").map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString(undefined, {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
+import { formatMedium, formatTimeLabel, todayISO } from "./dateUtils.js";
 
 export default function App() {
   const [appointments, setAppointments] = useState([]);
@@ -189,10 +173,10 @@ export default function App() {
                 "{cancelTarget.title}"
               </p>
               <p className="confirm-appointment-meta">
-                {formatDate(cancelTarget.date)} ·{" "}
-                {formatTime(cancelTarget.start_time.slice(0, 5))}
+                {formatMedium(cancelTarget.date)} ·{" "}
+                {formatTimeLabel(cancelTarget.start_time.slice(0, 5))}
                 {" – "}
-                {formatTime(cancelTarget.end_time.slice(0, 5))}
+                {formatTimeLabel(cancelTarget.end_time.slice(0, 5))}
               </p>
               <p>This appointment will remain visible on the board, marked as cancelled.</p>
             </>

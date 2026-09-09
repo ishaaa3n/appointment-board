@@ -85,20 +85,28 @@ def update_appointment(
     return appointment
 
 
-_A = models.AppointmentStatus
+AppointmentStatus = models.AppointmentStatus
 
 ACTION_TARGET = {
-    "complete": _A.completed,
-    "miss": _A.missed,
-    "cancel": _A.cancelled,
-    "restore": _A.scheduled,
+    "complete": AppointmentStatus.completed,
+    "miss": AppointmentStatus.missed,
+    "cancel": AppointmentStatus.cancelled,
+    "restore": AppointmentStatus.scheduled,
 }
 
 ACTION_ALLOWED_FROM = {
-    "complete": {_A.scheduled, _A.missed},
-    "miss": {_A.scheduled, _A.completed},
-    "cancel": {_A.scheduled, _A.completed, _A.missed},
-    "restore": {_A.completed, _A.missed, _A.cancelled},
+    "complete": {AppointmentStatus.scheduled, AppointmentStatus.missed},
+    "miss": {AppointmentStatus.scheduled, AppointmentStatus.completed},
+    "cancel": {
+        AppointmentStatus.scheduled,
+        AppointmentStatus.completed,
+        AppointmentStatus.missed,
+    },
+    "restore": {
+        AppointmentStatus.completed,
+        AppointmentStatus.missed,
+        AppointmentStatus.cancelled,
+    },
 }
 
 ACTION_VERB = {
@@ -124,7 +132,7 @@ def transition_status(
         )
 
     target = ACTION_TARGET[action]
-    if target == _A.scheduled:
+    if target == AppointmentStatus.scheduled:
         raise_if_conflict(
             db,
             appointment.date,

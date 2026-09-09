@@ -1,12 +1,5 @@
 const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
-class ApiError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ApiError";
-  }
-}
-
 async function request(path, options = {}) {
   const res = await fetch(`${API_URL}${path}`, {
     headers: { "Content-Type": "application/json" },
@@ -25,7 +18,7 @@ async function request(path, options = {}) {
     } catch {
       // response had no JSON body
     }
-    throw new ApiError(message);
+    throw new Error(message);
   }
 
   if (res.status === 204) return null;
@@ -69,5 +62,3 @@ export function cancelAppointment(id) {
 export function restoreAppointment(id) {
   return request(`/appointments/${id}/restore`, { method: "PATCH" });
 }
-
-export { ApiError };
