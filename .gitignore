@@ -1,0 +1,10 @@
+backend/venv/
+backend/__pycache__/
+backend/app/__pycache__/
+backend/app/routers/__pycache__/
+backend/appointments.db
+backend/server.log
+
+frontend/node_modules/
+frontend/dist/
+frontend/vite.log

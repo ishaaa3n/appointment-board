@@ -1,0 +1,7 @@
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+sqlalchemy==2.0.35
+pydantic==2.9.2
+
+# Only needed if you point DATABASE_URL at Postgres instead of the default
+# SQLite file. Install separately: pip install -r requirements-postgres.txt
