@@ -14,15 +14,6 @@ def find_conflict(
     end_time: time_type,
     exclude_id: int | None = None,
 ) -> models.Appointment | None:
-    """
-    Two appointments conflict when their time ranges overlap on the same date:
-        existing.start < new.end  AND  existing.end > new.start
-
-    Cancelled appointments free up their slot (they no longer reserve time).
-    Completed appointments still block the slot, since they did happen.
-    Adjacent appointments (10:00-11:00 and 11:00-12:00) are allowed because
-    the comparison is strict.
-    """
     query = db.query(models.Appointment).filter(
         models.Appointment.date == appointment_date,
         models.Appointment.status != models.AppointmentStatus.cancelled,
@@ -94,24 +85,6 @@ def update_appointment(
     return appointment
 
 
-# Status lifecycle. Each action is only valid from certain current statuses,
-# which keeps the "..." menu from turning into a free-for-all status editor.
-#
-#              ┌────────────┐
-#              │ scheduled  │──────────────┐
-#              └─┬───────┬──┘              │
-#         complete       miss              cancel
-#                │       │                 │
-#          ┌─────▼──┐ ┌──▼─────┐    ┌──────▼───┐
-#          │completed│ │ missed │    │cancelled │
-#          └───┬────┬┘ └┬─────┬─┘    └────┬─────┘
-#              │    └miss┘     └complete┘   │
-#           restore                      restore
-#              └──────────────► scheduled ◄─┘
-#
-# "cancel" is reachable from completed/missed too (e.g. a completed
-# appointment was logged in error and needs to come off the board as
-# cancelled rather than staying completed).
 _A = models.AppointmentStatus
 
 ACTION_TARGET = {
@@ -152,8 +125,6 @@ def transition_status(
 
     target = ACTION_TARGET[action]
     if target == _A.scheduled:
-        # Going back to scheduled re-reserves the slot, which may now be
-        # taken by something else booked after this one stopped blocking it.
         raise_if_conflict(
             db,
             appointment.date,

@@ -41,9 +41,6 @@ function formatTime(t) {
   return `${hour12}:${String(m).padStart(2, "0")} ${suffix}`;
 }
 
-// Client-side preview only, for instant feedback while typing. The backend
-// re-checks this authoritatively on submit, since it has the latest data
-// and can't be bypassed.
 function findLocalConflict(existing, form, excludeId) {
   return existing.find(
     (a) =>

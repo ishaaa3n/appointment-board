@@ -43,8 +43,7 @@ def seed_if_empty():
         day_plus_2 = today + timedelta(days=2)
 
         seed_data = [
-            # Yesterday — 3 appointments, including a missed one and an
-            # overdue appointment that was never resolved
+            # yesterday
             dict(
                 title="Investor Check-in",
                 description="Monthly update call with the seed investor.",
@@ -69,7 +68,7 @@ def seed_if_empty():
                 end_time=time(16, 30),
                 status=models.AppointmentStatus.scheduled,
             ),
-            # Today — 4 appointments, all three statuses
+            # today
             dict(
                 title="Client Discovery Call",
                 description="Intro call with a prospective client to scope requirements.",
@@ -102,7 +101,7 @@ def seed_if_empty():
                 end_time=time(15, 30),
                 status=models.AppointmentStatus.cancelled,
             ),
-            # Tomorrow — 3 appointments
+            # tomorrow
             dict(
                 title="Marketing Sync",
                 description="Weekly sync with the marketing team on campaign status.",
@@ -127,7 +126,7 @@ def seed_if_empty():
                 end_time=time(15, 0),
                 status=models.AppointmentStatus.scheduled,
             ),
-            # Day after tomorrow — 2 appointments
+            # day after tomorrow
             dict(
                 title="Quarterly Review",
                 description="Review quarterly goals and metrics with leadership.",
